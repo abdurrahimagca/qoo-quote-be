@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { GraphQLModule } from '@nestjs/graphql';
 import { PingModule } from './ping/ping.module';
 import { ApolloDriver } from '@nestjs/apollo';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { ApolloDriver } from '@nestjs/apollo';
       driver: ApolloDriver,
     }),
     PingModule,
+    AuthModule,
   ],
 })
 export class AppModule {}
