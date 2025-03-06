@@ -23,6 +23,10 @@ import { AuthModule } from './auth/auth.module';
       autoSchemaFile: true,
       playground: true,
       driver: ApolloDriver,
+      context: ({ req, res }: { req: Request; res: Response }) => ({
+        req,
+        res,
+      }),
     }),
     PingModule,
     AuthModule,

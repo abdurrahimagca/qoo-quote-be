@@ -1,4 +1,27 @@
 services:
+  traefik:
+    image: traefik:v2.9
+    container_name: qoo-quote-traefik
+    command:
+      - '--api.insecure=true'
+      - '--providers.docker=true'
+      - '--providers.docker.exposedbydefault=false'
+      - '--entrypoints.web.address=:80'
+      - '--log.level=DEBUG'
+      - '--accesslog=true'
+      - '--accesslog.fields.headers.names.*=true'
+      - '--providers.docker.network=qoo-quote-network'
+    ports:
+      - '80:80'
+      - '8080:8080'
+    networks:
+      - qoo-quote-network
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on:
+      api:
+        condition: service_healthy
+
   api:
     image: qoo-quote-api:latest
     build:
@@ -7,17 +30,31 @@ services:
     container_name: qoo-quote-api
     env_file:
       - .env.development
-    ports:
-      - '3005:3000'
     networks:
       - qoo-quote-network
-    command: ['pnpm', 'run', 'start:dev']
+    command: >
+      sh -c "
+        echo 'Waiting for database...' &&
+        while ! nc -z database 5432; do sleep 1; done &&
+        echo 'Database is ready!' &&
+        pnpm run start:dev
+      "
     volumes:
       - .:/app
     restart: always
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:3000/health || exit 1
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
     depends_on:
       database:
         condition: service_healthy
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.api.rule=Host(`localhost.qq.api`)'
+      - 'traefik.http.services.api.loadbalancer.server.port=3000'
 
   database:
     image: postgres:13-alpine
@@ -49,3 +86,4 @@ volumes:
 networks:
   qoo-quote-network:
     name: qoo-quote-network
+    external: true
