@@ -9,7 +9,6 @@ services:
       - '--entrypoints.web.address=:80'
       - '--log.level=DEBUG'
       - '--accesslog=true'
-      - '--accesslog.fields.headers.names.*=true'
       - '--providers.docker.network=qoo-quote-network'
     ports:
       - '80:80'
@@ -18,9 +17,6 @@ services:
       - qoo-quote-network
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-    depends_on:
-      api:
-        condition: service_healthy
 
   api:
     image: qoo-quote-api:latest
@@ -28,6 +24,8 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: qoo-quote-api
+    expose:
+      - 3000
     env_file:
       - .env.development
     networks:
@@ -42,18 +40,12 @@ services:
     volumes:
       - .:/app
     restart: always
-    healthcheck:
-      test: wget --no-verbose --tries=1 --spider http://localhost:3000/health || exit 1
-      interval: 5s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
     depends_on:
       database:
         condition: service_healthy
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.api.rule=Host(`localhost.qq.api`)'
+      - 'traefik.http.routers.api.rule=Host(`local.qq.api.com`)'
       - 'traefik.http.services.api.loadbalancer.server.port=3000'
 
   database:

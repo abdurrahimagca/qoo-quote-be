@@ -1,15 +1,9 @@
-FROM node:20-alpine
+FROM node:22-alpine
 WORKDIR /app
-
-# Bağımlılık dosyalarını kopyala
 COPY package*.json ./
 COPY pnpm-lock.yaml ./
-
-# Global paketleri yükle
 RUN npm install -g pnpm @nestjs/cli
 
-# Bağımlılıkları yükle
 RUN pnpm install
 
-# Kaynak kodları kopyala
 COPY . .

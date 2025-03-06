@@ -3,18 +3,18 @@
 # Host dosyası kontrolü ve güncellemesi için fonksiyon
 update_hosts() {
   echo "Checking and updating /etc/hosts..."
-  if ! grep -q "localhost.qq.api" /etc/hosts; then
-    echo "Adding localhost.qq.api to /etc/hosts..."
+  if ! grep -q "local.qq.api.com" /etc/hosts; then
+    echo "Adding local.qq.api.com to /etc/hosts..."
     if [[ "$OSTYPE" == "darwin"* ]]; then
       # macOS için
-      echo "127.0.0.1 localhost.qq.api" | sudo tee -a /etc/hosts
+      echo "127.0.0.1 local.qq.api.com" | sudo tee -a /etc/hosts
     else
       # Linux için
-      echo "127.0.0.1 localhost.qq.api" | sudo tee -a /etc/hosts
+      echo "127.0.0.1 local.qq.api.com" | sudo tee -a /etc/hosts
     fi
     echo "Host entry added successfully"
   else
-    echo "localhost.qq.api already exists in /etc/hosts"
+    echo "local.qq.api.com already exists in /etc/hosts"
   fi
 
   # DNS önbelleğini temizle
