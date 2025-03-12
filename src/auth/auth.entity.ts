@@ -1,8 +1,16 @@
 import { randomUUID } from 'node:crypto';
-import { Entity, PrimaryGeneratedColumn, Column, BeforeInsert } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  BeforeInsert,
+  OneToOne,
+  JoinColumn,
+} from 'typeorm';
 
+import { User } from '../user/user.entity';
 @Entity()
-export class User {
+export class Auth {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -14,6 +22,10 @@ export class User {
 
   @Column({ nullable: true })
   providerId: string;
+
+  @OneToOne(() => User)
+  @JoinColumn()
+  user: User;
 
   @BeforeInsert()
   generateId() {
