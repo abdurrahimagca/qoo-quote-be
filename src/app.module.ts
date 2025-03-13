@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { PostsModule } from './posts/posts.module';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
+import { ProtectorModule } from './protector/protector.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin
     AuthModule,
     UserModule,
     PostsModule,
+    ProtectorModule,
   ],
 })
-export class AppModule {}
+export class AppModule { }
