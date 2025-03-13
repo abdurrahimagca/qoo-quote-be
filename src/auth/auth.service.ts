@@ -21,9 +21,7 @@ export class AuthService {
     accessToken: string;
     refreshToken: string;
   }> {
-    const payload = this.jwtService.verify(refreshToken, {
-      secret: process.env.JWT_REFRESH_SECRET,
-    });
+    const payload = this.jwtService.verify(refreshToken);
 
     const auth = await this.repository.findOne({
       where: {

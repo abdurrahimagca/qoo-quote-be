@@ -64,6 +64,7 @@ export class AuthController {
     } catch (error) {
       throw new UnauthorizedException({
         message: 'Refresh token did not satisfy requirements',
+
         status: 401,
         details: error,
       });
