@@ -10,7 +10,7 @@ export enum Gender {
 
 registerEnumType(Gender, { name: 'Gender' });
 
-@ObjectType() // Makes it a GraphQL object
+@ObjectType()
 @Entity()
 export class User {
   @Field()
@@ -25,11 +25,11 @@ export class User {
   @Column({ nullable: true })
   name: string;
 
-  @Field(() => Int || null) // Define type explicitly for GraphQL
+  @Field(() => Int, { nullable: true })
   @Column({ nullable: true })
   age: number;
 
-  @Field(() => Gender)
+  @Field(() => Gender, { nullable: true })
   @Column({
     type: 'enum',
     enum: Gender,

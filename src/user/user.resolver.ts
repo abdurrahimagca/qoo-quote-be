@@ -29,6 +29,7 @@ export class UserResolver {
     @Args('age', { nullable: true }) age?: number,
     @Args('gender', { nullable: true }) gender?: Gender,
     @Args('isPrivate', { nullable: true }) isPrivate?: boolean,
+    @Args('username', { nullable: true }) username?: string,
     // Extract user from request
   ): Promise<User> {
     const userId = context.req.uid;
@@ -39,6 +40,13 @@ export class UserResolver {
     if (typeof age !== 'undefined') user.age = age;
     if (typeof gender !== 'undefined') user.gender = gender;
     if (typeof isPrivate !== 'undefined') user.isPrivate = isPrivate;
+    if (typeof username !== 'undefined') {
+      if (await this.userService.checkUserNameAvailability(username)) {
+        user.username = username;
+      } else {
+        throw new Error('Username already taken');
+      }
+    }
 
     await this.userService.patchUser(user);
     return this.userService.findUserById(userId);
