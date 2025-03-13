@@ -17,11 +17,49 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
+  async refresh(refreshToken: string): Promise<{
+    accessToken: string;
+    refreshToken: string;
+  }> {
+    const payload = this.jwtService.verify(refreshToken, {
+      secret: process.env.JWT_REFRESH_SECRET,
+    });
+
+    const auth = await this.repository.findOne({
+      where: {
+        provider: payload.provider,
+        providerId: payload.providerId,
+      },
+      relations: ['user'],
+    });
+
+    if (!auth) {
+      throw new Error('Auth not found');
+    }
+
+    const accessToken = this.jwtService.sign(
+      {
+        uid: auth.user.id,
+        email: auth.email,
+        username: auth.user.username,
+      },
+      {
+        secret: process.env.JWT_SECRET,
+        expiresIn: '15m',
+      },
+    );
+
+    return { accessToken, refreshToken };
+  }
+
   async validateOrCreateUser(
     providerId: string,
     email: string,
     provider: string,
-  ): Promise<string> {
+  ): Promise<{
+    accessToken: string;
+    refreshToken: string;
+  }> {
     let auth = await this.repository.findOne({
       where: { email, provider, providerId },
       relations: ['user'], // Ensure we fetch the related user
@@ -43,11 +81,29 @@ export class AuthService {
 
       await this.repository.save(auth);
     }
+    const accessToken = this.jwtService.sign(
+      {
+        uid: auth.user.id,
+        email: auth.email,
+        username: auth.user.username,
+      },
+      {
+        expiresIn: '15m',
+      },
+    );
+    const refreshToken = this.jwtService.sign(
+      {
+        uid: auth.user.id,
+        email: auth.email,
+        username: auth.user.username,
+        providerId: auth.providerId,
+        provider: auth.provider,
+      },
+      {
+        expiresIn: '7d',
+      },
+    );
 
-    return this.jwtService.sign({
-      uid: auth.user.id,
-      email: auth.email,
-      username: auth.user.username,
-    });
+    return { accessToken, refreshToken };
   }
 }

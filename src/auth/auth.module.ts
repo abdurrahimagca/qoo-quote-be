@@ -20,7 +20,9 @@ import { User } from 'src/user/user.entity';
     }),
     JwtModule.register({
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '15m' },
+      signOptions: {
+        issuer: 'qq.apiserver',
+      },
     }),
   ],
   controllers: [AuthController],

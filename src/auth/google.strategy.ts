@@ -33,7 +33,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       'google',
     );
     return done(null, {
-      accessToken: jwt,
+      tokens: jwt,
     });
   }
 }
