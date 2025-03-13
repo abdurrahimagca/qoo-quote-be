@@ -2,9 +2,11 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { GraphQLModule } from '@nestjs/graphql';
 import { PingModule } from './ping/ping.module';
-import { ApolloDriver } from '@nestjs/apollo';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
+import { PostsModule } from './posts/posts.module';
+import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 
 @Module({
   imports: [
@@ -20,9 +22,10 @@ import { UserModule } from './user/user.module';
       autoLoadEntities: true,
       synchronize: true,
     }),
-    GraphQLModule.forRoot({
+    GraphQLModule.forRoot<ApolloDriverConfig>({
       autoSchemaFile: true,
-      playground: true,
+      plugins: [ApolloServerPluginLandingPageLocalDefault()],
+      playground: false,
       driver: ApolloDriver,
       context: ({ req, res }: { req: Request; res: Response }) => ({
         req,
@@ -32,6 +35,7 @@ import { UserModule } from './user/user.module';
     PingModule,
     AuthModule,
     UserModule,
+    PostsModule,
   ],
 })
 export class AppModule {}
