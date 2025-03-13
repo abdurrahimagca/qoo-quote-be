@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { GraphQLModule } from '@nestjs/graphql';
-import { PingModule } from './ping/ping.module';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
@@ -32,7 +31,6 @@ import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin
         res,
       }),
     }),
-    PingModule,
     AuthModule,
     UserModule,
     PostsModule,

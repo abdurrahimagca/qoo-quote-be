@@ -34,10 +34,9 @@ if [ ! -f ".env.development" ]; then
 fi
 
 case "$1" in
-  "dev")
+  "dev:up")
     echo "Starting in development mode"
-    update_hosts
-    docker compose -f compose.dev.yml --env-file .env.development up
+    docker compose -f compose.dev.yml --env-file .env.development up -d
     ;;
     
   "dev:kill")
@@ -59,17 +58,33 @@ case "$1" in
   "dev:build")
     echo "Building containers"
     docker compose -f compose.dev.yml --env-file .env.development build
+    update_hosts
     ;;
-    
+
+  "dev:down")
+    echo "Stopping containers"
+    docker compose -f compose.dev.yml --env-file .env.development down
+    ;;
+  
+  "dev:up:build")
+    echo "Starting in development mode"
+    update_hosts
+    docker compose -f compose.dev.yml --env-file .env.development up --build
+    ;;
+  
+
   "dev:restart")
     echo "Restarting containers"
-    update_hosts
     docker compose -f compose.dev.yml --env-file .env.development restart
     ;;
     
   "dev:logs")
     echo "Showing logs"
     docker compose -f compose.dev.yml --env-file .env.development logs -f
+    ;;
+  "dev:logs:api")
+    echo "Showing logs"
+    docker compose -f compose.dev.yml --env-file .env.development logs -f api
     ;;
     
   "dev:bash")
@@ -79,12 +94,16 @@ case "$1" in
     
   *)
     echo "Invalid command. Available commands:"
-    echo "  dev         - Start development environment"
+    echo "  dev:up         - Start development environment"
     echo "  dev:kill    - Stop and remove all containers"
     echo "  dev:build   - Build containers"
     echo "  dev:restart - Restart containers"
     echo "  dev:logs    - Show container logs"
+    echo "  dev:logs:api- Show api container logs"
     echo "  dev:bash    - Open bash in api container"
+    echo "  dev:down    - Stop containers"
+    echo "  dev:up:build- Start development environment with build"
+
     exit 1
     ;;
 esac
