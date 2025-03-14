@@ -84,8 +84,8 @@ jobs:
             git reset --hard origin/test
 
             echo ">>> Starting deployment"
-            docker compose -f compose.test.yml pull
-            docker compose -f compose.test.yml --env-file .env.test up -d --force-recreate api
+            docker-compose -f compose.test.yml pull
+            docker-compose -f compose.test.yml --env-file .env.test up -d --force-recreate api
 
       - name: Notify on Success
         if: success()
