@@ -90,8 +90,8 @@ jobs:
 
             echo ">>> Starting deployment"
             cd ~/qoo-quote-be
-            docker-compose -f compose.test.yml down
-            docker-compose -f compose.test.yml pull
+            docker-compose -f compose.test.yml --env-file .env.test down  --remove-orphans
+            docker-compose -f compose.test.yml --env-file .env.test pull
             docker-compose -f compose.test.yml --env-file .env.test up -d
 
       - name: Notify on Success
