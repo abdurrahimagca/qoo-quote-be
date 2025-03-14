@@ -85,13 +85,14 @@ jobs:
             echo "${{ secrets.DOT_ENV_TEST }}" | base64 --decode > ~/qoo-quote-be/.env.test
             chmod 600 ~/qoo-quote-be/.env.test
 
-            echo ">>> Pulling latest image"
-            docker pull ghcr.io/${{ github.repository }}:test
+            echo ">>> Setting environment variable"
+            export GITHUB_REPOSITORY="${{ github.repository }}"
 
             echo ">>> Starting deployment"
             cd ~/qoo-quote-be
+            docker-compose -f compose.test.yml down
             docker-compose -f compose.test.yml pull
-            docker-compose -f compose.test.yml --env-file .env.test up -d --force-recreate api
+            docker-compose -f compose.test.yml --env-file .env.test up -d
 
       - name: Notify on Success
         if: success()
