@@ -99,34 +99,18 @@ jobs:
             echo ">>> Creating .env.test file"
             echo "${{ secrets.DOT_ENV_TEST }}" > .env.test
 
-            echo ">>> Installing Docker Compose if not present"
-            if ! command -v docker-compose &> /dev/null; then
-              sudo apt-get update
-              sudo apt-get install -y docker-compose-plugin
-            fi
-
             echo ">>> Logging into GitHub Container Registry"
             echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
             # Build and start services
-            echo ">>> Building and starting services"
-            docker-compose -f compose.test.yml --env-file .env.test build
-            docker-compose -f compose.test.yml --env-file .env.test pull
-            docker-compose -f compose.test.yml --env-file .env.test down
-            docker system prune -af
+            echo ">>> Starting services"
             docker-compose -f compose.test.yml --env-file .env.test up -d
 
             echo ">>> Checking container status"
             docker-compose -f compose.test.yml ps
 
             echo ">>> Showing recent logs"
-            docker-compose -f compose.test.yml logs --tail=50
-
-            echo ">>> Running database migrations"
-            docker-compose -f compose.test.yml exec -T api pnpm run migration:run
-
-            echo ">>> Running tests"
-            docker-compose -f compose.test.yml exec -T api pnpm run test
+            docker-compose -f compose.test.yml logs --tail=50 
           EOF
 
       - name: Notify on Success

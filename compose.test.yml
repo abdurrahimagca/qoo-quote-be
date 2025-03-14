@@ -11,6 +11,7 @@ services:
       - .env.test
     networks:
       - qq-test-internal
+      - traefik-public
     command: >
       sh -c "
         echo 'Waiting for database...' &&
