@@ -90,6 +90,9 @@ jobs:
 
             echo ">>> Starting deployment"
             cd ~/qoo-quote-be
+            git rebase origin/test 
+            git pull origin test
+            
             docker-compose -f compose.test.yml --env-file .env.test down  --remove-orphans
             docker-compose -f compose.test.yml --env-file .env.test pull
             docker-compose -f compose.test.yml --env-file .env.test up -d
