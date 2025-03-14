@@ -69,7 +69,7 @@ export class AuthController {
     }
   }
 
-  @Post('token')
+  @Post('exchange')
   async exchangeAuthCode(@Req() req: Request) {
     try {
       const { auth_code } = req.body;
