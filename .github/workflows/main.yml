@@ -29,12 +29,14 @@ jobs:
           if [ -z "${{ secrets.SSH_KEY }}" ]; then echo "SSH_KEY is not set!" >&2; exit 1; fi
           if [ -z "${{ secrets.SSH_IP }}" ]; then echo "SSH_IP is not set!" >&2; exit 1; fi
           if [ -z "${{ secrets.SSH_USER }}" ]; then echo "SSH_USER is not set!" >&2; exit 1; fi
- 
 
-      - name: Setup PNPM
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
+      # Create .env.test file securely without logging
+      - name: Create .env.test file
+        shell: bash
+        run: |
+          set +x  # Disable command logging
+          echo "${{ secrets.DOT_ENV_TEST }}" | base64 --decode > .env.test
+          chmod 600 .env.test
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -59,6 +61,8 @@ jobs:
           cache-to: type=gha,mode=max
           build-args: |
             NODE_ENV=test
+          secrets: |
+            "dot_env_test=${{ secrets.DOT_ENV_TEST }}"
 
   deploy:
     name: Deploy to Test Environment
@@ -74,16 +78,18 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            echo ">>> Navigating to test project directory"
-            cd ~/qoo-quote-be || exit 1
+            echo ">>> Logging into GitHub Container Registry"
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-            echo ">>> Fetching latest changes"
-            git fetch origin test
+            echo ">>> Creating .env.test file"
+            echo "${{ secrets.DOT_ENV_TEST }}" | base64 --decode > ~/qoo-quote-be/.env.test
+            chmod 600 ~/qoo-quote-be/.env.test
 
-            echo ">>> Resetting to origin/test"
-            git reset --hard origin/test
+            echo ">>> Pulling latest image"
+            docker pull ghcr.io/${{ github.repository }}:test
 
             echo ">>> Starting deployment"
+            cd ~/qoo-quote-be
             docker-compose -f compose.test.yml pull
             docker-compose -f compose.test.yml --env-file .env.test up -d --force-recreate api
 
