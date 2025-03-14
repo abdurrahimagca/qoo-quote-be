@@ -4,11 +4,21 @@ WORKDIR /app
 # Install pnpm
 RUN npm install -g pnpm
 
+# Install nest CLI globally
+RUN npm install -g @nestjs/cli
+
 # Copy package files
 COPY pnpm-lock.yaml package.json ./
 
-# Install dependencies
-RUN pnpm install --prod --frozen-lockfile
+# Install dependencies including dev dependencies since we need them for build
+RUN pnpm install
 
 COPY . .
-CMD ["pnpm", "start"] 
+
+# Build the application
+RUN pnpm run build
+
+# Remove dev dependencies for production
+RUN pnpm prune --prod
+
+CMD ["pnpm", "start:prod"] 

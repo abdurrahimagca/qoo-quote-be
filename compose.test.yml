@@ -17,10 +17,8 @@ services:
         echo 'Waiting for database...' &&
         while ! nc -z database 5432; do sleep 1; done &&
         echo 'Database is ready!' &&
-        pnpm run start:dev
+        pnpm start:dev
       "
-    volumes:
-      - .:/app
     restart: always
     depends_on:
       database:
