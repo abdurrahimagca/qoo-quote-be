@@ -17,8 +17,7 @@ services:
         echo 'Waiting for database...' &&
         while ! nc -z database 5432; do sleep 1; done &&
         echo 'Database is ready!' &&
-        node dist/main
-      "
+        node /usr/src/app/dist/main"
     restart: always
     depends_on:
       database:
