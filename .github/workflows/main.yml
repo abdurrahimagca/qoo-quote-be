@@ -82,35 +82,19 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_KEY }}
 
-      - name: Prepare deployment directory
-        env:
-          SSH_USER: ${{ secrets.SSH_USER }}
-          SSH_IP: ${{ secrets.SSH_IP }}
-        run: |
-          ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_IP "mkdir -p ~/qoo-quote-test"
-
       - name: Deploy to Test Server
         env:
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_IP: ${{ secrets.SSH_IP }}
-          REPO_URL: ${{ github.server_url }}/${{ github.repository }}
         run: |
           ssh -o StrictHostKeyChecking=no -tt $SSH_USER@$SSH_IP << 'EOF'
             set -e
 
             echo ">>> Navigating to test project directory"
-            cd ~/qoo-quote-test || exit 1
+            cd ~/qoo-quote-be || exit 1
 
-            echo ">>> Initializing git repository if not exists"
-            if [ ! -d .git ]; then
-              git init
-              git remote add origin $REPO_URL || true
-            fi
-
-            echo ">>> Fetching latest changes"
-            git fetch origin test
-            git checkout test
-            git reset --hard origin/test
+            echo ">>> Pulling latest changes"
+            git pull origin test
 
             echo ">>> Creating .env.test file"
             echo "${{ secrets.DOT_ENV_TEST }}" > .env.test
