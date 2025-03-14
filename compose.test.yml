@@ -3,7 +3,7 @@ services:
     image: qoo-quote-api:test
     build:
       context: .
-      dockerfile: Dockerfile.test
+      dockerfile: Dockerfile.prod
     container_name: qoo-quote-api
     expose:
       - 3005
@@ -17,7 +17,7 @@ services:
         echo 'Waiting for database...' &&
         while ! nc -z database 5432; do sleep 1; done &&
         echo 'Database is ready!' &&
-        nest start --watch
+        node dist/main
       "
     restart: always
     depends_on:
