@@ -14,17 +14,13 @@ services:
       database:
         condition: service_healthy
     labels:
-      - 'traefik.enable=true'
-      - 'traefik.docker.network=traefik-public'
-      - 'traefik.http.services.qoo-quote-api.loadbalancer.server.port=3000'
-      - 'traefik.http.routers.qoo-quote-api.rule=Host(`qq-api-test-v0.homelab-kaleici.space`)'
-      - 'traefik.http.routers.qoo-quote-api.entrypoints=websecure'
-      - 'traefik.http.routers.qoo-quote-api.service=qoo-quote-api'
-      - 'traefik.http.routers.qoo-quote-api.tls=true'
-      - 'traefik.http.routers.qoo-quote-api.tls.certresolver=cloudflare'
-      - 'traefik.http.middlewares.qoo-quote-api-headers.headers.sslredirect=true'
-      - 'traefik.http.routers.qoo-quote-api.middlewares=qoo-quote-api-headers'
-
+      traefik.enable: "true"
+      traefik.http.routers.qoo-quote-api.rule: "Host(`qq-api-test-v0.homelab-kaleici.space`)"
+      traefik.http.routers.qoo-quote-api.entrypoints: "websecure"
+      traefik.http.services.qoo-quote-api.loadbalancer.server.port: "3000"
+      traefik.http.routers.qoo-quote-api.tls: "true"
+      traefik.http.routers.qoo-quote-api.tls.certresolver: "cloudflare"
+      traefik.http.middlewares.qoo-quote-api-headers.headers.sslredirect: "true"
   database:
     image: postgres:13-alpine
     container_name: qoo-quote-database
