@@ -1,17 +1,21 @@
 # Use the official Node.js image as the base image
-FROM node:20
+FROM node:20-slim AS base
+
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME/bin:$PATH"
+RUN corepack enable
+
+FROM base AS prod
 
 # Set the working directory inside the container
-WORKDIR /usr/src/app
+WORKDIR /app
 
-# Install pnpm and NestJS CLI globally
-RUN npm install -g pnpm @nestjs/cli
-
-# Copy package.json and pnpm-lock.yaml to the working directory
-COPY package*.json ./
+# Copy package files
 COPY pnpm-lock.yaml ./
+COPY package.json ./
 
-# Install the application dependencies
+# Install dependencies including devDependencies for build
+RUN pnpm fetch
 RUN pnpm install
 
 # Copy the rest of the application files
@@ -19,6 +23,9 @@ COPY . .
 
 # Build the NestJS application
 RUN pnpm run build
+
+# Remove devDependencies after build
+RUN pnpm prune --prod
 
 # Expose the application port
 EXPOSE 3005

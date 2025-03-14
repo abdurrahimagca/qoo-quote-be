@@ -71,6 +71,9 @@ importers:
       zod:
         specifier: ^3.24.2
         version: 3.24.2
+      '@nestjs/cli':
+        specifier: ^10.0.0
+        version: 10.4.9
     devDependencies:
       '@nestjs/cli':
         specifier: ^10.0.0
