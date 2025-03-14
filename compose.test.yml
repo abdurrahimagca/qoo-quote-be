@@ -12,12 +12,6 @@ services:
     networks:
       - qq-test-internal
       - traefik-public
-    command: >
-      sh -c "
-        echo 'Waiting for database...' &&
-        while ! nc -z database 5432; do sleep 1; done &&
-        echo 'Database is ready!' &&
-        node /usr/src/app/dist/main"
     restart: always
     depends_on:
       database:
