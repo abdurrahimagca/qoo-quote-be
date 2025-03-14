@@ -14,13 +14,15 @@ services:
       database:
         condition: service_healthy
     labels:
-      traefik.enable: 'true'
-      traefik.http.routers.qoo-quote.rule: 'Host(`qq-api-test-v0.homelab-kaleici.space`)'
-      traefik.http.routers.qoo-quote.entrypoints: 'websecure'
-      traefik.http.services.qoo-quote.loadbalancer.server.port: '3005'
-      traefik.http.routers.qoo-quote.tls: 'true'
-      traefik.http.routers.qoo-quote.tls.certresolver: 'cloudflare'
-      traefik.http.middlewares.qoo-quote-headers.headers.sslredirect: 'true'
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.qoo-quote-api.rule=Host(`qq-api-test-v0.homelab-kaleici.space`)'
+      - 'traefik.http.routers.qoo-quote-api.entrypoints=websecure'
+      - 'traefik.http.routers.qoo-quote-api.tls=true'
+      - 'traefik.http.routers.qoo-quote-api.tls.certresolver=cloudflare'
+      - 'traefik.http.services.qoo-quote-api.loadbalancer.server.port=3005'
+      - 'traefik.http.middlewares.qoo-quote-api-headers.headers.sslredirect=true'
+      - 'traefik.http.routers.qoo-quote-api.middlewares=qoo-quote-api-headers'
+      - 'traefik.docker.network=traefik-public'
 
   database:
     image: postgres:13-alpine
