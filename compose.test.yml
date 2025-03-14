@@ -3,7 +3,7 @@ services:
     image: ghcr.io/${GITHUB_REPOSITORY}:test
     container_name: qoo-quote-api
     expose:
-      - 3005 
+      - 3000
     env_file:
       - .env.test
     networks:
@@ -16,7 +16,7 @@ services:
     labels:
       - 'traefik.enable=true'
       - 'traefik.docker.network=traefik-public'
-      - 'traefik.http.services.qoo-quote-api.loadbalancer.server.port=3005'
+      - 'traefik.http.services.qoo-quote-api.loadbalancer.server.port=3000'
       - 'traefik.http.routers.qoo-quote-api.rule=Host(`qq-api-test-v0.homelab-kaleici.space`)'
       - 'traefik.http.routers.qoo-quote-api.entrypoints=websecure'
       - 'traefik.http.routers.qoo-quote-api.service=qoo-quote-api'

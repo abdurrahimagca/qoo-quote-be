@@ -12,7 +12,26 @@ async function bootstrap() {
     allowedHeaders: ['Content-Type', 'Authorization', "qq-api-key"],
   });
 
-  await app.listen(3005, '0.0.0.0');
+  app.enableShutdownHooks();
+
+  const port = process.env.PORT || 3000;
+  await app.listen(port, '0.0.0.0');
+
   logger.log(`Application is running on: ${await app.getUrl()}`);
+  logger.log(`Environment: ${process.env.NODE_ENV}`);
+
+  const signals = ['SIGTERM', 'SIGINT'];
+  signals.forEach(signal => {
+    process.on(signal, async () => {
+      logger.log(`Received ${signal} signal. Starting graceful shutdown...`);
+      await app.close();
+      logger.log('Application shutdown complete');
+      process.exit(0);
+    });
+  });
 }
-bootstrap();
+
+bootstrap().catch(err => {
+  console.error('Failed to start application:', err);
+  process.exit(1);
+});

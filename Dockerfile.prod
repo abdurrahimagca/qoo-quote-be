@@ -28,7 +28,7 @@ RUN pnpm run build
 RUN pnpm prune --prod
 
 # Expose the application port
-EXPOSE 3005
+EXPOSE 3000
 
 # Command to run the application
 CMD ["node", "dist/main"]
