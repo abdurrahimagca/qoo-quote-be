@@ -1,6 +1,6 @@
 services:
   api:
-    image: qoo-quote-api:latest
+    image: qoo-quote-api:test
     build:
       context: .
       dockerfile: Dockerfile.prod
@@ -64,5 +64,5 @@ networks:
   traefik-public:
     external: true
   qq-test-internal:
-    name: qq-test-internal  
+    name: qq-test-internal
     driver: bridge
