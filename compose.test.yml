@@ -10,7 +10,7 @@ services:
     env_file:
       - .env.test
     networks:
-      - qoo-quote-network
+      - qq-test-internal
     command: >
       sh -c "
         echo 'Waiting for database...' &&
@@ -47,7 +47,7 @@ services:
     volumes:
       - qoo-quote-database:/var/lib/postgresql/data
     networks:
-      - qoo-quote-network
+      - qq-test-internal
     restart: always
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
@@ -61,6 +61,8 @@ volumes:
     name: qoo-quote-database
 
 networks:
-  qoo-quote-network:
-    name: qoo-quote-network
+  traefik-public:
     external: true
+  qq-test-internal:
+    name: qq-test-internal  
+    driver: bridge

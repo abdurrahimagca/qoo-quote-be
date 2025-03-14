@@ -129,7 +129,7 @@ jobs:
             docker system prune -af
 
             echo ">>> Starting test containers with the latest image"
-            docker-compose -f docker-compose.yml up -d
+            docker-compose -f docker-compose.yml --env-file .env.test up -d
 
             echo ">>> Checking container status"
             docker-compose -f docker-compose.yml ps
