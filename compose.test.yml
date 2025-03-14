@@ -26,7 +26,7 @@ services:
         condition: service_healthy
     labels:
       traefik.enable: 'true'
-      traefik.http.routers.qoo-quote.rule: 'Host(`qq-api-v0.homelab-kaleici.space`)'
+      traefik.http.routers.qoo-quote.rule: 'Host(`qq-api-test-v0.homelab-kaleici.space`)'
       traefik.http.routers.qoo-quote.entrypoints: 'websecure'
       traefik.http.services.qoo-quote.loadbalancer.server.port: '3005'
       traefik.http.routers.qoo-quote.tls: 'true'
@@ -37,7 +37,7 @@ services:
     image: postgres:13-alpine
     container_name: qoo-quote-database
     env_file:
-      - .env.development
+      - .env.test
     environment:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
